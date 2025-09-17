@@ -8,6 +8,7 @@ namespace Grocery.Core.Data.Repositories
         private readonly List<Product> products;
         public ProductRepository()
         {
+<<<<<<< Feature/UC2
             products = [
                 new Product(1, "Melk", 300),
                 new Product(2, "Kaas", 100),
@@ -17,6 +18,8 @@ namespace Grocery.Core.Data.Repositories
         public List<Product> GetAll()
         {
             return products; //wijzig dit in de gemaakte lijst uit de constructo
+=======
+>>>>>>> main
         }
 
         public Product? Get(int id)

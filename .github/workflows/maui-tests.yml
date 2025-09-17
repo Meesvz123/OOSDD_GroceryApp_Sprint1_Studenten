@@ -32,3 +32,8 @@ jobs:
  
       - name: Voer unit tests uit
         run: dotnet test --configuration Release --no-restore --no-build --verbosity normal
+      - name: Restore dependencies
+        run: dotnet restore Grocery.App/Grocery.App.csproj --runtime win-x64
+
+      - name: Build
+        run: dotnet build Grocery.App/Grocery.App.csproj --runtime win-x64 --no-restore
