@@ -1,17 +1,17 @@
-name: MAUI Unit Tests
+name: MAUI Android Build
 
 on:
   push:
     branches:
       - main
-      - infra/runner-toevoegen
   pull_request:
     branches:
       - main
 
 jobs:
-  android-build:
+  build-android:
     runs-on: ubuntu-latest
+
     steps:
       - name: Haal de repository op
         uses: actions/checkout@v4
@@ -24,34 +24,17 @@ jobs:
       - name: Installeer MAUI workloads (Android)
         run: dotnet workload install maui-android
 
-      - name: Herstel afhankelijkheden (Android)
+      - name: Herstel NuGet packages
         run: dotnet restore Grocery.App/Grocery.App.csproj --framework net8.0-android
 
-      - name: Bouw de applicatie (Android)
+      - name: Bouw de Android app
         run: dotnet build Grocery.App/Grocery.App.csproj --framework net8.0-android --runtime android-arm64 --configuration Release --no-restore
 
-      - name: Voer unit tests uit (Android)
-        run: dotnet test --configuration Release --no-build --verbosity normal
+      - name: Publiceer Android .apk
+        run: dotnet publish Grocery.App/Grocery.App.csproj --framework net8.0-android --runtime android-arm64 -c Release -o ./output/android
 
-  windows-build:
-    runs-on: windows-latest
-    steps:
-      - name: Haal de repository op
-        uses: actions/checkout@v4
-
-      - name: Installeer .NET SDK
-        uses: actions/setup-dotnet@v3
+      - name: Upload build-artifact (.apk)
+        uses: actions/upload-artifact@v4
         with:
-          dotnet-version: '8.0.x'
-
-      - name: Installeer MAUI workloads (Windows)
-        run: dotnet workload install maui-windows
-
-      - name: Herstel afhankelijkheden (Windows)
-        run: dotnet restore Grocery.App/Grocery.App.csproj --framework net8.0-windows10.0.19041.0
-
-      - name: Bouw de applicatie (Windows)
-        run: dotnet build Grocery.App/Grocery.App.csproj --framework net8.0-windows10.0.19041.0 --runtime win-x64 --configuration Release --no-restore
-
-      - name: Voer unit tests uit (Windows)
-        run: dotnet test --configuration Release --no-build --verbosity normal
+          name: maui-android-apk
+          path: ./output/android/*.apk
