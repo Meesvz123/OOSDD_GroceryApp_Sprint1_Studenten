@@ -1,40 +1,34 @@
-name: MAUI Android Build
-
+name: MAUI Unit Tests
+ 
 on:
   push:
     branches:
       - main
+      - infra/runner-toevoegen
   pull_request:
     branches:
       - main
-
+ 
 jobs:
-  build-android:
-    runs-on: ubuntu-latest
-
+  test:
+    runs-on: ubuntu-latest  # Of windows-latest/macOS-latest als specifiek platform nodig is
     steps:
       - name: Haal de repository op
         uses: actions/checkout@v4
-
+ 
       - name: Installeer .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'
-
-      - name: Installeer MAUI workloads (Android)
+          dotnet-version: '8.0.x'  # Gebruik de juiste versie voor MAUI
+ 
+      - name: Installeer MAUI workloads
         run: dotnet workload install maui-android
-
-      - name: Herstel NuGet packages
-        run: dotnet restore Grocery.App/Grocery.App.csproj -p:TargetFramework=net8.0-android
-
-      - name: Bouw de Android app
-        run: dotnet build Grocery.App/Grocery.App.csproj --framework net8.0-android --runtime android-arm64 --configuration Release --no-restore
-
-      - name: Publiceer Android .apk
-        run: dotnet publish Grocery.App/Grocery.App.csproj --framework net8.0-android --runtime android-arm64 -c Release -o ./output/android
-
-      - name: Upload build-artifact (.apk)
-        uses: actions/upload-artifact@v4
-        with:
-          name: maui-android-apk
-          path: ./output/android/*.apk
+ 
+      - name: Herstel afhankelijkheden
+        run: dotnet restore
+ 
+      - name: Bouw de applicatie
+        run: dotnet build --configuration Release --no-restore
+ 
+      - name: Voer unit tests uit
+        run: dotnet test --configuration Release --no-restore --no-build --verbosity normal
