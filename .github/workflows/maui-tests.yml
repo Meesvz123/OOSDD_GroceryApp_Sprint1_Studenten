@@ -1,5 +1,5 @@
 name: MAUI Unit Tests
- 
+
 on:
   push:
     branches:
@@ -8,32 +8,50 @@ on:
   pull_request:
     branches:
       - main
- 
+
 jobs:
-  test:
-    runs-on: ubuntu-latest  # Of windows-latest/macOS-latest als specifiek platform nodig is
+  android-build:
+    runs-on: ubuntu-latest
     steps:
       - name: Haal de repository op
         uses: actions/checkout@v4
- 
+
       - name: Installeer .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'  # Gebruik de juiste versie voor MAUI
- 
-      - name: Installeer MAUI workloads
-        run: dotnet workload install maui-android
- 
-      - name: Herstel afhankelijkheden
-        run: dotnet restore
- 
-      - name: Bouw de applicatie
-        run: dotnet build --configuration Release --no-restore
- 
-      - name: Voer unit tests uit
-        run: dotnet test --configuration Release --no-restore --no-build --verbosity normal
-      - name: Restore dependencies
-        run: dotnet restore Grocery.App/Grocery.App.csproj --runtime win-x64
+          dotnet-version: '8.0.x'
 
-      - name: Build
-        run: dotnet build Grocery.App/Grocery.App.csproj --runtime win-x64 --no-restore
+      - name: Installeer MAUI workloads (Android)
+        run: dotnet workload install maui-android
+
+      - name: Herstel afhankelijkheden (Android)
+        run: dotnet restore Grocery.App/Grocery.App.csproj -f net8.0-android
+
+      - name: Bouw de applicatie (Android)
+        run: dotnet build Grocery.App/Grocery.App.csproj -f net8.0-android --runtime android-arm64 --configuration Release --no-restore
+
+      - name: Voer unit tests uit (Android)
+        run: dotnet test --configuration Release --no-build --verbosity normal
+
+  windows-build:
+    runs-on: windows-latest
+    steps:
+      - name: Haal de repository op
+        uses: actions/checkout@v4
+
+      - name: Installeer .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Installeer MAUI workloads (Windows)
+        run: dotnet workload install maui-windows
+
+      - name: Herstel afhankelijkheden (Windows)
+        run: dotnet restore Grocery.App/Grocery.App.csproj -f net8.0-windows10.0.19041.0
+
+      - name: Bouw de applicatie (Windows)
+        run: dotnet build Grocery.App/Grocery.App.csproj -f net8.0-windows10.0.19041.0 --runtime win-x64 --configuration Release --no-restore
+
+      - name: Voer unit tests uit (Windows)
+        run: dotnet test --configuration Release --no-build --verbosity normal
