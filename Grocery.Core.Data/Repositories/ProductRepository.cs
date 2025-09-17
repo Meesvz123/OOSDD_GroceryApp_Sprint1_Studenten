@@ -10,10 +10,10 @@ namespace Grocery.Core.Data.Repositories
         {
             products = new List<Product>
             { 
-                new Product { Id = 1, Name = "Melk", Stock = 300 },
-                new Product { Id = 2, Name = "Kaas", Stock = 100 },
-                new Product { Id = 3, Name = "Brood", Stock = 400 },
-                new Product { Id = 4, Name = "Cornflakes", Stock = 0 }
+                new Product ( Id = 1, Name = "Melk", Stock = 300 ),
+                new Product ( Id = 2, Name = "Kaas", Stock = 100 ),
+                new Product (Id = 3, Name = "Brood", Stock = 400 ),
+                new Product (Id = 4, Name = "Cornflakes", Stock = 0 )
 
              };
         }
