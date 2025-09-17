@@ -25,7 +25,7 @@ jobs:
         run: dotnet workload install maui-android
 
       - name: Herstel NuGet packages
-        run: dotnet restore Grocery.App/Grocery.App.csproj --framework net8.0-android
+        run: dotnet restore Grocery.App/Grocery.App.csproj -p:TargetFramework=net8.0-android
 
       - name: Bouw de Android app
         run: dotnet build Grocery.App/Grocery.App.csproj --framework net8.0-android --runtime android-arm64 --configuration Release --no-restore
